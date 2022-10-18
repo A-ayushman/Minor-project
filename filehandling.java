@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class Test {
+public class filehandling {
 	private static final int ROWS = 10;
     private static final int COLUMNS = 3;
 
