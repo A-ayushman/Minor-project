@@ -1,0 +1,216 @@
+// Maze size
+private int totalDis = 0;
+
+// A recursive utility function to solve Maze problem
+
+private boolean solveMazeUtil(int[][] maze, int x, int y, int[][] sol)
+{
+	// if (x, y is goal) return true
+	if (x == DefineConstants.N - 1 && y == DefineConstants.N - 1 && maze[x][y] == 1)
+	{
+		sol[x][y] = 1;
+		return true;
+	}
+	// Check if maze[x][y] is valid
+	if (isSafe(maze, x, y) == true)
+	{
+		// Check if the current block is already part of
+		// solution path.
+		if (sol[x][y] == 1)
+		{
+			return false;
+		}
+		// mark x, y as part of solution path
+		sol[x][y] = 1;
+		/* Move forward in x direction */
+		if (solveMazeUtil(maze, x + 1, y, sol) == true)
+		{
+			return true;
+		}
+		// If moving in x direction doesn't give solution
+		// then Move down in y direction
+		if (solveMazeUtil(maze, x, y + 1, sol) == true)
+		{
+			return true;
+		}
+		// If none of the above movements work then
+		// BACKTRACK: unmark x, y as part of solution path
+		sol[x][y] = 0;
+		return false;
+	}
+	return false;
+}
+
+// A utility function to print solution matrix sol[N][N]
+private void printSolution(int[][] sol)
+{
+	for (int i = 0; i < DefineConstants.N; i++)
+	{
+		for (int j = 0; j < DefineConstants.N; j++)
+		{
+			System.out.print(" ");
+			System.out.print(sol[i][j]);
+			System.out.print(" ");
+		}
+			totalDis++;
+		System.out.print("\n");
+	}
+	// cout<<totalDis;
+}
+
+// A utility function to check if x, y is valid index for
+// N*N maze
+private boolean isSafe(int[][] maze, int x, int y)
+{
+	// if (x, y outside maze) return false
+	if (x >= 0 && x < DefineConstants.N && y >= 0 && y < DefineConstants.N && maze[x][y] == 1)
+	{
+		return true;
+	}
+	return false;
+}
+
+// This function solves the Maze problem using Backtracking.
+// It mainly uses solveMazeUtil() to solve the problem. It
+// returns false if no path is possible, otherwise return
+// true and prints the path in the form of 1s. Please note
+// that there may be more than one solutions, this function
+// prints one of the feasible solutions.
+private boolean solveMaze(int[][] maze)
+{
+	int[][] sol =
+	{
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0}
+	};
+	if (solveMazeUtil(maze, 0, 0, sol) == false)
+	{
+		System.out.print("Solution doesn't exist");
+		return false;
+	}
+	printSolution(sol);
+	return true;
+}
+
+// driver program to test above function
+private static int Main()
+{
+	int s;
+	s = Integer.parseInt(ConsoleInput.readToWhiteSpace(true));
+
+	int[][] maze = new int[DefineConstants.N][DefineConstants.N];
+	for (int i = 0;i < DefineConstants.N;i++)
+	{
+		for (int j = 0;j < DefineConstants.N;j++)
+		{
+			maze[i][j] = Integer.parseInt(ConsoleInput.readToWhiteSpace(true));
+		}
+	}
+	solveMaze(maze);
+	if (totalDis / s > 1 && totalDis % s != 0)
+	{
+		System.out.print(1 + totalDis / s);
+	}
+	else if (totalDis / s > 1 && totalDis % s == 0)
+	{
+		System.out.print(totalDis / s);
+	}
+	else
+	{
+		System.out.print("0");
+	}
+
+	return 0;
+}
+
+final class DefineConstants
+{
+	public static final int N = 4;
+}
+
+public final class ConsoleInput
+{
+	private static boolean goodLastRead = false;
+	public static boolean lastReadWasGood()
+	{
+		return goodLastRead;
+	}
+
+	public static String readToWhiteSpace(boolean skipLeadingWhiteSpace)
+	{
+		String input = "";
+		char nextChar;
+		while (Character.isWhitespace(nextChar = (char)System.in.read()))
+		{
+			//accumulate leading white space if skipLeadingWhiteSpace is false:
+			if (!skipLeadingWhiteSpace)
+			{
+				input += nextChar;
+			}
+		}
+		//the first non white space character:
+		input += nextChar;
+
+		//accumulate characters until white space is reached:
+		while (!Character.isWhitespace(nextChar = (char)System.in.read()))
+		{
+			input += nextChar;
+		}
+
+		goodLastRead = input.length() > 0;
+		return input;
+	}
+
+	public static String scanfRead()
+	{
+		return scanfRead(null, -1);
+	}
+
+	public static String scanfRead(String unwantedSequence)
+	{
+		return scanfRead(unwantedSequence, -1);
+	}
+
+	public static String scanfRead(String unwantedSequence, int maxFieldLength)
+	{
+		String input = "";
+
+		char nextChar;
+		if (unwantedSequence != null)
+		{
+			nextChar = '\0';
+			for (int charIndex = 0; charIndex < unwantedSequence.length(); charIndex++)
+			{
+				if (Character.isWhitespace(unwantedSequence.charAt(charIndex)))
+				{
+					//ignore all subsequent white space:
+					while (Character.isWhitespace(nextChar = (char)System.in.read()))
+					{
+					}
+				}
+				else
+				{
+					//ensure each character matches the expected character in the sequence:
+					nextChar = (char)System.in.read();
+					if (nextChar != unwantedSequence.charAt(charIndex))
+						return null;
+				}
+			}
+
+			input = (new Character(nextChar)).toString();
+			if (maxFieldLength == 1)
+				return input;
+		}
+
+		while (!Character.isWhitespace(nextChar = (char)System.in.read()))
+		{
+			input += nextChar;
+			if (maxFieldLength == input.length())
+				return input;
+		}
+
+		return input;
+	}
+}
